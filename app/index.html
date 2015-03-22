@@ -21,11 +21,12 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container">
+    <div class="container" ng-controller="IndexController">
       <div class="header">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a ng-href="#">Home</a></li>
           <!-- //angularfire -->
+          <li><a ng-show-auth> {{profile.name}}</a></li>
           <li><a ng-href="#/chat">chat</a></li>
           <li>
             <a ng-hide-auth="" href="#/login">log in</a>

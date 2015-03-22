@@ -31,7 +31,7 @@ angular.module('newlisApp')
     
 
     function redirect() {
-      $location.path('/account');
+      $location.path('/');
     }
 
     function showError(err) {
