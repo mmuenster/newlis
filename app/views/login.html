@@ -1,27 +1,13 @@
 
-<h2>Login Page</h2>
+<h2>Avero Diagnostics</h2>
 
-<form role="form">
-  <p class="form-group">
-    <label for="loginEmail">email</label>
-    <input id="loginEmail" required name="email" type="email" ng-model="email" class="form-control" />
-  </p>
-  <p class="form-group">
-    <label for="loginPass">password</label>
-    <input id="loginPass" required name="pass" type="password" ng-model="pass" class="form-control" />
-  </p>
-  <p class="form-group" ng-cloak ng-show="createMode">
-    <label for="loginConfirm">confirm pass</label>
-    <input id="loginConfirm" required name="confirm" type="password" ng-model="confirm" class="form-control" />
-  </p>
+      <form class="jumbotron" class="form-signin">
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input ng-model="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input ng-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <button class="btn btn-lg btn-primary btn-block" ng-click="passwordLogin(email,password)">Sign in</button>
+      </form>
 
-  <p>
-    <button  class="btn btn-primary" ng-click="passwordLogin(email, pass)" ng-hide="createMode">Log In</button>
-    <button  class="btn btn-default" ng-click="createMode = true" ng-hide="createMode">Register</button>
-    <button  class="btn btn-primary" ng-cloak ng-show="createMode"
-            ng-click="createAccount(email, pass, confirm)">Create Account</button>
-    <button  class="btn btn-default" ng-cloak ng-show="createMode" ng-click="createMode = false">Cancel</button>
-  </p>
-</form>
 <p ng-show="err" class="bg-danger">{{err}}</p>
 

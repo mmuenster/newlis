@@ -7,7 +7,12 @@
  * Manages authentication to any active providers.
  */
 angular.module('newlisApp')
-  .controller('LoginCtrl', function ($scope, simpleLogin, $location) {
+  .controller('LoginCtrl', function ($scope, simpleLogin, fbutil, $location) {
+    
+    if(simpleLogin.getUser()) {
+      redirect();
+    }
+
     $scope.passwordLogin = function(email, pass) {
       $scope.err = null;
       simpleLogin.passwordLogin({email: email, password: pass}, {rememberMe: true}).then(
@@ -37,6 +42,5 @@ angular.module('newlisApp')
     function showError(err) {
       $scope.err = err;
     }
-
 
   });

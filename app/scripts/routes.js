@@ -67,20 +67,16 @@ angular.module('newlisApp')
         controller: 'LoginCtrl'
       })
 
-      .when('/chat', {
+      .whenAuthenticated('/chat', {
         templateUrl: 'views/chat.html',
         controller: 'ChatCtrl'
       })
 
-      .whenAuthenticated('/account', {
-        templateUrl: 'views/account.html',
-        controller: 'AccountCtrl'
+      .whenAuthenticated('/userManagement', {
+        templateUrl: 'views/userManagement.html',
+        controller: 'UserManagementController'
       })
 
-      .when('/chat', {
-        templateUrl: 'views/chat.html',
-        controller: 'ChatCtrl'
-      })
       .otherwise({redirectTo: '/'});
   }])
 
@@ -92,6 +88,7 @@ angular.module('newlisApp')
    */
   .run(['$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectPath',
     function($rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectPath) {
+      
       // watch for login status changes and redirect if appropriate
       simpleLogin.watch(check, $rootScope);
 
