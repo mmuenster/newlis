@@ -30,10 +30,32 @@
 
         user: null, //todo use getUser() and remove this var
 
+        profile: null,
+
         initialized: false,
 
+        getProfile: function() {
+          var deferred = $q.defer();
+          var profile = {};
+          var user=auth.$getAuth();
+          if(user!=null) {
+            var profile = fbutil.syncObject('users/'+user.uid).$loaded().then(function(profile) {
+              if(profile) {
+                deferred.resolve(profile);
+              } else {
+                console.log("Rejected in this place")
+                deferred.reject('No profile obtained!');
+              }
+            });
+          } else {
+                console.log("Rejected in the other place")
+                deferred.reject('No profile obtained!');
+          }
+          return deferred.promise;
+        },
+
         getUser: function() {
-          return auth.$getAuth();
+           return auth.$getAuth();
         },
 
         login: function(provider, opts) {
@@ -79,8 +101,10 @@
         },
 
         watch: function(cb, $scope) {
+          auth.$waitForAuth().then(function(user) {
+            cb(user);
+          });
           listeners.push(cb);
-          auth.$waitForAuth(cb);
           var unbind = function() {
             var i = listeners.indexOf(cb);
             if( i > -1 ) { listeners.splice(i, 1); }

@@ -80,14 +80,55 @@ angular.module('newlisApp')
       .otherwise({redirectTo: '/'});
   }])
 
+  //ui-router configuration of states
+.config(function($stateProvider, $urlRouterProvider){
+  $urlRouterProvider.otherwise('/');
+
+  var checkAuthentication = ['$q', 'simpleLogin', function($q, simpleLogin) {
+    return simpleLogin.getUser();
+  }];
+
+  var getProfile = ['$q', 'simpleLogin', function($q, simpleLogin) {
+    return simpleLogin.getProfile();
+  }];
+
+  $stateProvider
+    .state('uiChat', {
+      templateUrl: 'views/chat.html',
+      controller: 'ChatCtrl',
+      url: '/chat'
+    })
+    .state('uiHome', {
+      templateUrl: 'views/main.html',
+      controller: 'MainCtrl',
+      url: '/',
+      resolve: {
+        user: checkAuthentication,
+        profile: getProfile //checkAuthentication returns the current firebase user or rejects
+      }
+    })
+    .state('uiUserManagement', {
+      templateUrl: 'views/userManagement.html',
+      controller: 'UserManagementController',
+      url: '/userManagement',
+      resolve: {
+        user: checkAuthentication  //checkAuthentication returns the current firebase user or rejects
+      }
+    })
+    .state('uiLogin', {
+      templateUrl: 'views/login.html',
+      controller: 'LoginCtrl',
+      url: '/login'
+    })
+})
   /**
    * Apply some route security. Any route's resolve method can reject the promise with
    * { authRequired: true } to force a redirect. This method enforces that and also watches
    * for changes in auth status which might require us to navigate away from a path
    * that we can no longer view.
    */
-  .run(['$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectPath',
-    function($rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectPath) {
+  .run(['$state','$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectPath',
+    function($state, $rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectPath) {
       
       // watch for login status changes and redirect if appropriate
       simpleLogin.watch(check, $rootScope);
@@ -99,6 +140,11 @@ angular.module('newlisApp')
           $location.path(loginRedirectPath);
         }
       });
+
+      $rootScope.$on('$stateChangeError', function () {
+          // Redirect user to our login page
+          $state.go('uiLogin');
+        });
 
       function check(user) {
         if( !user && authRequired($location.path()) ) {

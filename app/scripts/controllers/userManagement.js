@@ -15,7 +15,7 @@ angular.module('newlisApp')
     }
 
     $scope.users = fbutil.syncObject('users');
-
+    $scope.user = user;
     $scope.logout = simpleLogin.logout;
     $scope.messages = [];
     var profile;
