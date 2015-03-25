@@ -9,7 +9,6 @@
  * Main module of the application.
  */
 angular.module('newlisApp', [
-    'ngRoute',
     'ui.router',
     'firebase',
     'firebase.utils',

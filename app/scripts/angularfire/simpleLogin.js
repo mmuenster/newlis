@@ -18,6 +18,9 @@
       var listeners = [];
 
       function statusChange() {
+        console.log('In status change')
+        // console.log(listeners)
+        // console.log(fns)
         fns.initialized = true;
         fns.user = auth.$getAuth() || null;
         angular.forEach(listeners, function(fn) {
@@ -43,12 +46,12 @@
               if(profile) {
                 deferred.resolve(profile);
               } else {
-                console.log("Rejected in this place")
+                console.log("Rejected as user was not null but profile load failed")
                 deferred.reject('No profile obtained!');
               }
             });
           } else {
-                console.log("Rejected in the other place")
+                console.log("Rejected profile as user was null")
                 deferred.reject('No profile obtained!');
           }
           return deferred.promise;

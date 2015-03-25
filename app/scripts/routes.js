@@ -29,58 +29,31 @@
  */
 angular.module('newlisApp')
 
-/**
- * Adds a special `whenAuthenticated` method onto $routeProvider. This special method,
- * when called, invokes the authRequired() service (see simpleLogin.js).
- *
- * The promise either resolves to the authenticated user object and makes it available to
- * dependency injection (see AccountCtrl), or rejects the promise if user is not logged in,
- * forcing a redirect to the /login page
- */
-  .config(['$routeProvider', 'SECURED_ROUTES', function($routeProvider, SECURED_ROUTES) {
-    // credits for this idea: https://groups.google.com/forum/#!msg/angular/dPr9BpIZID0/MgWVluo_Tg8J
-    // unfortunately, a decorator cannot be use here because they are not applied until after
-    // the .config calls resolve, so they can't be used during route configuration, so we have
-    // to hack it directly onto the $routeProvider object
-    $routeProvider.whenAuthenticated = function(path, route) {
-      route.resolve = route.resolve || {};
-      route.resolve.user = ['authRequired', function(authRequired) {
-        return authRequired();
-      }];
-      $routeProvider.when(path, route);
-      SECURED_ROUTES[path] = true;
-      return $routeProvider;
-    };
-  }])
+// /**
+//  * Adds a special `whenAuthenticated` method onto $routeProvider. This special method,
+//  * when called, invokes the authRequired() service (see simpleLogin.js).
+//  *
+//  * The promise either resolves to the authenticated user object and makes it available to
+//  * dependency injection (see AccountCtrl), or rejects the promise if user is not logged in,
+//  * forcing a redirect to the /login page
+//  */
+//   .config(['$routeProvider', 'SECURED_ROUTES', function($routeProvider, SECURED_ROUTES) {
+//     // credits for this idea: https://groups.google.com/forum/#!msg/angular/dPr9BpIZID0/MgWVluo_Tg8J
+//     // unfortunately, a decorator cannot be use here because they are not applied until after
+//     // the .config calls resolve, so they can't be used during route configuration, so we have
+//     // to hack it directly onto the $routeProvider object
+//     $routeProvider.whenAuthenticated = function(path, route) {
+//       route.resolve = route.resolve || {};
+//       route.resolve.user = ['authRequired', function(authRequired) {
+//         return authRequired();
+//       }];
+//       $routeProvider.when(path, route);
+//       SECURED_ROUTES[path] = true;
+//       return $routeProvider;
+//     };
+//   }])
 
-  // configure views; the authRequired parameter is used for specifying pages
-  // which should only be available while logged in
-  .config(['$routeProvider', function($routeProvider) {
-    $routeProvider
-      .whenAuthenticated('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-      })
-
-      .when('/login', {
-        templateUrl: 'views/login.html',
-        controller: 'LoginCtrl'
-      })
-
-      .whenAuthenticated('/chat', {
-        templateUrl: 'views/chat.html',
-        controller: 'ChatCtrl'
-      })
-
-      .whenAuthenticated('/userManagement', {
-        templateUrl: 'views/userManagement.html',
-        controller: 'UserManagementController'
-      })
-
-      .otherwise({redirectTo: '/'});
-  }])
-
-  //ui-router configuration of states
+   //ui-router configuration of states
 .config(function($stateProvider, $urlRouterProvider){
   $urlRouterProvider.otherwise('/');
 
@@ -111,9 +84,6 @@ angular.module('newlisApp')
       templateUrl: 'views/userManagement.html',
       controller: 'UserManagementController',
       url: 'userManagement',
-      resolve: {
-        user: checkAuthentication  //checkAuthentication returns the current firebase user or rejects
-      }
     })
     .state('uiLogin', {
       templateUrl: 'views/login.html',
@@ -127,33 +97,32 @@ angular.module('newlisApp')
    * for changes in auth status which might require us to navigate away from a path
    * that we can no longer view.
    */
-  .run(['$state','$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectPath', 'loginRedirectState',
-    function($state, $rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectPath, loginRedirectState) {
+  .run(['$state','$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectState',
+    function($state, $rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectState) {
       
       // watch for login status changes and redirect if appropriate
       simpleLogin.watch(check, $rootScope);
 
-      // some of our routes may reject resolve promises with the special {authRequired: true} error
-      // this redirects to the login page whenever that is encountered
-      $rootScope.$on('$routeChangeError', function(e, next, prev, err) {
-        if( angular.isObject(err) && err.authRequired ) {
-          $location.path(loginRedirectPath);
-        }
-      });
+      // // some of our routes may reject resolve promises with the special {authRequired: true} error
+      // // this redirects to the login page whenever that is encountered
+      // $rootScope.$on('$routeChangeError', function(e, next, prev, err) {
+      //   if( angular.isObject(err) && err.authRequired ) {
+      //     $location.path(loginRedirectPath);
+      //   }
+      // });
 
       $rootScope.$on('$stateChangeError', function(e, next, prev, err) {
           // Redirect user to our login page
-          console.log('in stateChangeError')
-          console.log(e)
-          console.log(next)
-          console.log(prev)
-          console.log(err)
+          // console.log('in stateChangeError')
+          // console.log(e)
+          // console.log(next)
+          // console.log(prev)
+          // console.log(err)
           $state.go(loginRedirectState);
         });
 
       function check(user) {
-        if( !user && authRequired($location.path()) ) {
-            console.log("in the check function")
+        if(!user) {
             $state.go(loginRedirectState);
         }
       }
