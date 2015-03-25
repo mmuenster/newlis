@@ -1,5 +1,8 @@
 
 <div class="row-fluid">
+
+<div ng-repeat="message in messages" class="alert alert-{{message.type}}">{{message.text}}</div>
+
 <table class="table table-striped table-bordered">
   <tr ng-repeat="(key,value) in users track by $index">
     <td>{{ $index }}</td>
@@ -8,9 +11,11 @@
     <td>{{ value.firstName }}</td>
     <td>{{ value.roles }}</td>
     <td>{{ value.npi }}</td>
-    <td><button class="btn" ng-click="#/editUser">Edit</button></td>
+    <td><button class="btn" ng-click="">Edit</button></td>
   </tr>
 </table>
+
+<ui-view></ui-view>
 
 <div class="col-md-4">
   <h3>Profile</h3>
@@ -83,4 +88,3 @@
 
 </div>
 <p class="clearfix"></p>
-<div ng-repeat="message in messages" class="alert alert-{{message.type}}">{{message.text}}</div>

@@ -15,9 +15,9 @@
           <li><a ui-sref="uiHome">About</a></li>
           <li><a href="#contact">Contact</a></li>
           <li class="dropdown">
-            <a ng-show="isAdmin()" ng-cloak class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin <span class="caret"></span></a>
+            <a ng-show="isAdmin()" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="#/userManagement">User Management</a></li>
+              <li><a ui-sref="uiHome.uiUserManagement">User Management</a></li>
               <li><a href="#">Another action</a></li>
               <li><a href="#">Something else here</a></li>
               <li class="divider"></li>
@@ -28,7 +28,7 @@
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#/chat">Chat</a></li>
+          <li><a ui-sref="uiHome.uiChat">Chat</a></li>
           <li class="dropdown">
             <a ng-cloak class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{profile.name}} <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
@@ -46,33 +46,33 @@
     </div>
   </nav>
 
-<div ui-view=""></div>
+<div ui-view="">  <!-- Content between ui-view is the 'default' content that gets replaced on state change. -->
+  <div class="jumbotron">
+    <h1>'Allo, 'Allo!</h1>
+    <p class="lead">
+      <img src="images/yeoman.png" alt="I'm Yeoman"><br>
+      Always a pleasure scaffolding your apps.
+    </p>
+    <p><a class="btn btn-lg btn-success" ng-href="#/">Splendid!<span class="glyphicon glyphicon-ok"></span></a></p>
+  </div>
 
-<div class="jumbotron">
-  <h1>'Allo, 'Allo!</h1>
-  <p class="lead">
-    <img src="images/yeoman.png" alt="I'm Yeoman"><br>
-    Always a pleasure scaffolding your apps.
-  </p>
-  <p><a class="btn btn-lg btn-success" ng-href="#/">Splendid!<span class="glyphicon glyphicon-ok"></span></a></p>
-</div>
+  <div class="row marketing">
+    <h4>Firebase</h4>
+    <p>
+      Firebase is a powerful API to store and sync data in realtime.
+    </p>
 
-<div class="row marketing">
-  <h4>Firebase</h4>
-  <p>
-    Firebase is a powerful API to store and sync data in realtime.
-  </p>
+    <h4>HTML5 Boilerplate</h4>
+    <p>
+      HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.
+    </p>
 
-  <h4>HTML5 Boilerplate</h4>
-  <p>
-    HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.
-  </p>
+    <h4>Angular</h4>
+    <p>
+      AngularJS is a toolset for building the framework most suited to your application development.
+    </p>
 
-  <h4>Angular</h4>
-  <p>
-    AngularJS is a toolset for building the framework most suited to your application development.
-  </p>
-
-  <h4>Karma</h4>
-  <p>Spectacular Test Runner for JavaScript.</p>
+    <h4>Karma</h4>
+    <p>Spectacular Test Runner for JavaScript.</p>
+  </div>
 </div>

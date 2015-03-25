@@ -16,9 +16,9 @@ angular.module('newlisApp')
 
     $scope.isAdmin = function() {
       if(profile.roles) { 
-        return false;
-     } else {
         return (profile.roles.search("Admin") > 0) ? true : false;
+      } else {
+     	return false
       }
     }
   });

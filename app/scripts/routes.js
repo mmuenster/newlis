@@ -93,10 +93,10 @@ angular.module('newlisApp')
   }];
 
   $stateProvider
-    .state('uiChat', {
+    .state('uiHome.uiChat', {
       templateUrl: 'views/chat.html',
       controller: 'ChatCtrl',
-      url: '/chat'
+      url: 'chat'
     })
     .state('uiHome', {
       templateUrl: 'views/main.html',
@@ -107,10 +107,10 @@ angular.module('newlisApp')
         profile: getProfile //checkAuthentication returns the current firebase user or rejects
       }
     })
-    .state('uiUserManagement', {
+    .state('uiHome.uiUserManagement', {
       templateUrl: 'views/userManagement.html',
       controller: 'UserManagementController',
-      url: '/userManagement',
+      url: 'userManagement',
       resolve: {
         user: checkAuthentication  //checkAuthentication returns the current firebase user or rejects
       }
@@ -127,8 +127,8 @@ angular.module('newlisApp')
    * for changes in auth status which might require us to navigate away from a path
    * that we can no longer view.
    */
-  .run(['$state','$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectPath',
-    function($state, $rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectPath) {
+  .run(['$state','$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectPath', 'loginRedirectState',
+    function($state, $rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectPath, loginRedirectState) {
       
       // watch for login status changes and redirect if appropriate
       simpleLogin.watch(check, $rootScope);
@@ -141,14 +141,20 @@ angular.module('newlisApp')
         }
       });
 
-      $rootScope.$on('$stateChangeError', function () {
+      $rootScope.$on('$stateChangeError', function(e, next, prev, err) {
           // Redirect user to our login page
-          $state.go('uiLogin');
+          console.log('in stateChangeError')
+          console.log(e)
+          console.log(next)
+          console.log(prev)
+          console.log(err)
+          $state.go(loginRedirectState);
         });
 
       function check(user) {
         if( !user && authRequired($location.path()) ) {
-          $location.path(loginRedirectPath);
+            console.log("in the check function")
+            $state.go(loginRedirectState);
         }
       }
 

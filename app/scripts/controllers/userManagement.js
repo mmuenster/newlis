@@ -7,19 +7,15 @@
  * Provides rudimentary account management functions.
  */
 angular.module('newlisApp')
-  .controller('UserManagementController', function ($scope, user, $rootScope, $location, simpleLogin, fbutil, $timeout) {
-    console.log($rootScope.profile.roles.search("Admin"))
-    if($rootScope.profile.roles.search("Admin") < 0) {
-      event.preventDefault()
-      $location.path('/')
+  .controller('UserManagementController', function ($scope, user, profile, $state, simpleLogin, fbutil, $timeout) {
+    if(profile.roles.search("Admin") < 0) {
+      $state.go('uiHome')
     }
 
     $scope.users = fbutil.syncObject('users');
     $scope.user = user;
     $scope.logout = simpleLogin.logout;
     $scope.messages = [];
-    var profile;
-    loadProfile(user);
 
     $scope.changePassword = function(oldPass, newPass, confirm) {
       $scope.err = null;
