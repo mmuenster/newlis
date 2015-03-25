@@ -97,8 +97,8 @@ angular.module('newlisApp')
    * for changes in auth status which might require us to navigate away from a path
    * that we can no longer view.
    */
-  .run(['$state','$rootScope', '$location', 'simpleLogin', 'SECURED_ROUTES', 'loginRedirectState',
-    function($state, $rootScope, $location, simpleLogin, SECURED_ROUTES, loginRedirectState) {
+  .run(['$state','$rootScope', 'simpleLogin', 'loginRedirectState',
+    function($state, $rootScope, simpleLogin, loginRedirectState) {
       
       // watch for login status changes and redirect if appropriate
       simpleLogin.watch(check, $rootScope);
@@ -127,11 +127,5 @@ angular.module('newlisApp')
         }
       }
 
-      function authRequired(path) {
-        return SECURED_ROUTES.hasOwnProperty(path);
-      }
     }
-  ])
-
-  // used by route security
-  .constant('SECURED_ROUTES', {});
+  ]);
