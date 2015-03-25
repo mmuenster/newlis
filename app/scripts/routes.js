@@ -90,6 +90,11 @@ angular.module('newlisApp')
       controller: 'EdituserCtrl',
       url: '/:uid'
     })
+    .state('home.caseEdit', {
+      templateUrl: 'views/caseEdit.html',
+      controller: 'CaseeditCtrl',
+      url: 'caseEdit/:caseNum'
+    })    
     .state('login', {
       templateUrl: 'views/login.html',
       controller: 'LoginCtrl',

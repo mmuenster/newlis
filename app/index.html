@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
@@ -18,7 +18,7 @@
   <body ng-app="newlisApp">
 
     <!-- Add your site or application content here -->
-    <div class="container">
+    <div class="container-fluid">
       <div ui-view=""></div>
     </div>
 
@@ -64,8 +64,10 @@
         <script src="scripts\controllers\userManagement.js"></script>
         <script src="scripts/directives/ngShowAuth.js"></script>
         <script src="scripts/directives/ngHideAuth.js"></script>
+        <script src="scripts/directives/autoFocus.js"></script>
         <script src="scripts\routes.js"></script>
         <script src="scripts/controllers/edituser.js"></script>
+        <script src="scripts/controllers/caseedit.js"></script>
         <!-- endbuild -->
 </body>
 </html>
