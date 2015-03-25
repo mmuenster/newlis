@@ -66,12 +66,12 @@ angular.module('newlisApp')
   }];
 
   $stateProvider
-    .state('uiHome.uiChat', {
+    .state('home.chat', {
       templateUrl: 'views/chat.html',
       controller: 'ChatCtrl',
       url: 'chat'
     })
-    .state('uiHome', {
+    .state('home', {
       templateUrl: 'views/main.html',
       controller: 'MainCtrl',
       url: '/',
@@ -80,12 +80,17 @@ angular.module('newlisApp')
         profile: getProfile //checkAuthentication returns the current firebase user or rejects
       }
     })
-    .state('uiHome.uiUserManagement', {
+    .state('home.userManagement', {
       templateUrl: 'views/userManagement.html',
       controller: 'UserManagementController',
       url: 'userManagement',
     })
-    .state('uiLogin', {
+    .state('home.userManagement.editUser', {
+      templateUrl: 'views/editUser.html',
+      controller: 'EdituserCtrl',
+      url: '/:uid'
+    })
+    .state('login', {
       templateUrl: 'views/login.html',
       controller: 'LoginCtrl',
       url: '/login'

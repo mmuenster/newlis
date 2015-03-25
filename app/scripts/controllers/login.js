@@ -7,7 +7,7 @@
  * Manages authentication to any active providers.
  */
 angular.module('newlisApp')
-  .controller('LoginCtrl', function ($scope, simpleLogin, fbutil, $location) {
+  .controller('LoginCtrl', function ($scope, simpleLogin, fbutil, $state) {
     
     if(simpleLogin.getUser()) {
       redirect();
@@ -36,7 +36,7 @@ angular.module('newlisApp')
     
 
     function redirect() {
-      $location.path('/');
+      $state.go('home');
     }
 
     function showError(err) {
