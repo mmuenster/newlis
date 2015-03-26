@@ -8,8 +8,8 @@
  * Controller of the newlisApp
  */
 angular.module('newlisApp')
-  .controller('EdituserCtrl', function ($scope, $stateParams, fbutil, simpleLogin, $timeout) {
-    $scope.data = fbutil.syncObject('users/' + $stateParams.uid);
+  .controller('EdituserCtrl', function ($scope, $stateParams, firebaseUtils, $timeout) {
+    $scope.data = firebaseUtils.syncObject('users/' + $stateParams.uid);
 
   	$scope.changePassword = function(oldPass, newPass, confirm) {
       $scope.err = null;

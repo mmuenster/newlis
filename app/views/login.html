@@ -1,6 +1,9 @@
+<div class="col-md-4"></div>
+<div class="col-md-4">
+<p ng-show="err" class="bg-danger">{{err}}</p>
 
-<h2>Avero Diagnostics</h2>
-
+<img src="/images/AveroLogo.png" alt="logo" height="100" width="520">
+<p></p>
       <form class="jumbotron" class="form-signin">
         <label for="inputEmail" class="sr-only">Email address</label>
         <input ng-model="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
@@ -9,5 +12,5 @@
         <button class="btn btn-lg btn-primary btn-block" ng-click="passwordLogin(email,password)">Sign in</button>
       </form>
 
-<p ng-show="err" class="bg-danger">{{err}}</p>
-
+</div>
+<div class="col-md-4"></div>

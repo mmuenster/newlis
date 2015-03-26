@@ -7,15 +7,15 @@
  * Manages authentication to any active providers.
  */
 angular.module('newlisApp')
-  .controller('LoginCtrl', function ($scope, simpleLogin, fbutil, $state) {
+  .controller('LoginCtrl', function ($scope, firebaseUtils, $state) {
     
-    if(simpleLogin.getUser()) {
+    if(firebaseUtils.isAuth()) {
       redirect();
     }
 
     $scope.passwordLogin = function(email, pass) {
       $scope.err = null;
-      simpleLogin.passwordLogin({email: email, password: pass}, {rememberMe: true}).then(
+      firebaseUtils.passwordLogin({email: email, password: pass}).then(
         redirect, showError
       );
     };
@@ -29,17 +29,17 @@ angular.module('newlisApp')
         $scope.err = 'Passwords do not match';
       }
       else {
-        simpleLogin.createAccount(email, pass, {rememberMe: true})
+        firebaseUtils.createAccount(email, pass, {rememberMe: true})
           .then(redirect, showError);
       }
     };
     
-
     function redirect() {
       $state.go('home');
     }
 
     function showError(err) {
+      console.log(err)
       $scope.err = err;
     }
 

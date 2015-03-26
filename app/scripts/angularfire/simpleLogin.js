@@ -13,14 +13,11 @@
       };
     })
 
-    .factory('simpleLogin', function($firebaseAuth, fbutil, $q, $rootScope, createProfile) {
+    .factory('simpleLogin', function($firebaseAuth, fbutil, $firebaseObject, $q, $rootScope, createProfile) {
       var auth = $firebaseAuth(fbutil.ref());
       var listeners = [];
 
       function statusChange() {
-        console.log('In status change')
-        // console.log(listeners)
-        // console.log(fns)
         fns.initialized = true;
         fns.user = auth.$getAuth() || null;
         angular.forEach(listeners, function(fn) {
@@ -42,8 +39,9 @@
           var profile = {};
           var user=auth.$getAuth();
           if(user!=null) {
-            var profile = fbutil.syncObject('users/'+user.uid).$loaded().then(function(profile) {
+            var profile = $firebaseObject(fbutil.ref('user/' + user.uid)).$loaded().then(function(profile) {
               if(profile) {
+                console.log("Resolving profile")
                 deferred.resolve(profile);
               } else {
                 console.log("Rejected as user was not null but profile load failed")
@@ -99,8 +97,14 @@
           return auth.$changeEmail({password: password, oldEmail: oldEmail, newEmail: newEmail});
         },
 
-        removeUser: function(email, pass) {
-          return auth.$removeUser({email: email, password: pass});
+        removeUser: function(email, pass, uid) {
+          var userRef = fbutil.ref('users/'+uid)
+          console.log(userRef)
+          fbutil.ref('users/' +uid).$remove().then(function(ref) {
+            return auth.$removeUser({email: email, password: pass});
+          }, function(error){
+            console.log("Error:",error)
+          })
         },
 
         watch: function(cb, $scope) {

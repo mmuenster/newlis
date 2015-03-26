@@ -11,7 +11,8 @@
 angular.module('newlisApp', [
     'ui.router',
     'firebase',
+    'firebase.config',
     'firebase.utils',
-    'simpleLogin'
+    'ui.bootstrap'
   ]);
 

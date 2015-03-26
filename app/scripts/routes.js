@@ -55,14 +55,14 @@ angular.module('newlisApp')
 
    //ui-router configuration of states
 .config(function($stateProvider, $urlRouterProvider){
+
   $urlRouterProvider.otherwise('/');
 
-  var checkAuthentication = ['$q', 'simpleLogin', function($q, simpleLogin) {
-    return simpleLogin.getUser();
-  }];
-
-  var getProfile = ['$q', 'simpleLogin', function($q, simpleLogin) {
-    return simpleLogin.getProfile();
+  var getUser = ['firebaseUtils', function(firebaseUtils) {
+    var userPromise = firebaseUtils.getUser().then(function(result) {
+      return result;
+    })
+    return userPromise;
   }];
 
   $stateProvider
@@ -76,8 +76,7 @@ angular.module('newlisApp')
       controller: 'MainCtrl',
       url: '/',
       resolve: {
-        user: checkAuthentication,
-        profile: getProfile //checkAuthentication returns the current firebase user or rejects
+        user: getUser,
       }
     })
     .state('home.userManagement', {
@@ -89,6 +88,11 @@ angular.module('newlisApp')
       templateUrl: 'views/editUser.html',
       controller: 'EdituserCtrl',
       url: '/:uid'
+    })
+    .state('home.userManagement.addNewUser', {
+      templateUrl: 'views/addNewUser.html',
+      controller: 'AddnewuserCtrl',
+      url: '/addNewUser'
     })
     .state('home.caseEdit', {
       templateUrl: 'views/caseEdit.html',
@@ -107,11 +111,11 @@ angular.module('newlisApp')
    * for changes in auth status which might require us to navigate away from a path
    * that we can no longer view.
    */
-  .run(['$state','$rootScope', 'simpleLogin', 'loginRedirectState',
-    function($state, $rootScope, simpleLogin, loginRedirectState) {
+  .run(['$state','$rootScope', 'firebaseUtils', 'loginRedirectState',
+    function($state, $rootScope, firebaseUtils, loginRedirectState) {
       
       // watch for login status changes and redirect if appropriate
-      simpleLogin.watch(check, $rootScope);
+      firebaseUtils.watch(check, $rootScope);
 
       // // some of our routes may reject resolve promises with the special {authRequired: true} error
       // // this redirects to the login page whenever that is encountered

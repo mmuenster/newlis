@@ -3,14 +3,14 @@
  * @name newlisApp.directive:ngShowAuth
  * @description
  * # ngShowAuthDirective
- * A directive that shows elements only when user is logged in. It also waits for simpleLogin
+ * A directive that shows elements only when user is logged in. It also waits for firebaseUtils
  * to be initialized so there is no initial flashing of incorrect state.
  */
 angular.module('newlisApp')
-  .directive('ngShowAuth', ['simpleLogin', '$timeout', function (simpleLogin, $timeout) {
+  .directive('ngShowAuth', ['firebaseUtils', '$timeout', function (firebaseUtils, $timeout) {
     'use strict';
     var isLoggedIn;
-    simpleLogin.watch(function(user) {
+    firebaseUtils.watch(function(user) {
       isLoggedIn = !!user;
     });
 
@@ -27,8 +27,7 @@ angular.module('newlisApp')
           }, 0);
         }
 
-        simpleLogin.watch(update, scope);
-        simpleLogin.getUser(update);
+        firebaseUtils.watch(update, scope);
       }
     };
   }]);

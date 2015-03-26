@@ -7,15 +7,21 @@
  * Provides rudimentary account management functions.
  */
 angular.module('newlisApp')
-  .controller('UserManagementController', function ($scope, user, profile, $state, simpleLogin, fbutil, $timeout) {
+  .controller('UserManagementController', function ($scope, user, $state, firebaseUtils, $timeout) {
     
-    if(profile.roles.search("Admin") < 0) {
+    if(user.profile.roles.search("Admin") < 0) {
       $state.go('uiHome')
     }
 
-    $scope.users = fbutil.syncObject('users');
+    $scope.users = firebaseUtils.syncObject('/users');
 
     $scope.messages = [];
 
-
+    $scope.removeUser=  function(email,password,uid) {
+      var r = confirm("Are you sure you want to delete the user, "+ user.profile.name + "?");
+      if (r) {
+          alert("You pressed OK!");
+          //firebaseUtils.removeUser(email,password,uid);
+      } 
+    };    
   });
