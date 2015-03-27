@@ -13,6 +13,5 @@ angular.module('newlisApp', [
     'firebase',
     'firebase.config',
     'firebase.utils',
-    'ui.bootstrap'
   ]);
 

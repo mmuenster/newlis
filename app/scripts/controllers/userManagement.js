@@ -9,7 +9,7 @@
 angular.module('newlisApp')
   .controller('UserManagementController', function ($scope, user, $state, firebaseUtils, $timeout) {
     
-    if(user.profile.roles.search("Admin") < 0) {
+    if(user.profile.roles.indexOf("Admin") < 0) {
       $state.go('uiHome')
     }
 
@@ -17,11 +17,10 @@ angular.module('newlisApp')
 
     $scope.messages = [];
 
-    $scope.removeUser=  function(email,password,uid) {
-      var r = confirm("Are you sure you want to delete the user, "+ user.profile.name + "?");
+    $scope.removeUser=  function(email,password,uid, name) {
+      var r = confirm("Are you sure you want to delete the user, "+ name + "?");
       if (r) {
-          alert("You pressed OK!");
-          //firebaseUtils.removeUser(email,password,uid);
+          firebaseUtils.removeUser(email,password,uid);
       } 
     };    
   });

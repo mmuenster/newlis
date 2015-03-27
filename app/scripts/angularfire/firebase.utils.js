@@ -7,7 +7,6 @@ angular.module('firebase.utils', ['firebase', 'firebase.config'])
       var fns={};
       var FBREF = new Firebase(FBURL);
       var auth = $firebaseAuth(FBREF);
-      var FBCurrentUserRef = auth.$getAuth() ? new Firebase(FBURL + 'users/' + auth.$getAuth().uid) : {};
 
       var listeners = [];
       auth.$onAuth(statusChange);
@@ -22,6 +21,17 @@ angular.module('firebase.utils', ['firebase', 'firebase.config'])
 
       function getFirebaseRef(path) {
           return new Firebase(FBURL + path);
+      }
+
+      this.FBREF = FBREF;
+
+      this.createNewUser = function(user) {
+        console.log(user)
+        $firebaseAuth(FBREF).$createUser(user).then(function(data) {
+          FBREF.child('users').child(data.uid).set(user)
+        }, function(error){
+          console.log(error)
+        });
       }
 
       this.isAuth = function() {
@@ -61,9 +71,8 @@ angular.module('firebase.utils', ['firebase', 'firebase.config'])
         var user = $firebaseAuth(FBREF).$getAuth();
         if(user) {
           var deferred = $q.defer()
-          var profile = $firebaseObject(FBCurrentUserRef).$loaded();
-          profile.then(function(data) {
-            user.profile=data;
+          var profile = FBREF.child('users').child(user.uid).once('value', function (dataSnapshot) {
+            user.profile=dataSnapshot.val();
             deferred.resolve(user);
           }, function(error) {
             deferred.reject("Profile Rejected!",error);
@@ -78,20 +87,6 @@ angular.module('firebase.utils', ['firebase', 'firebase.config'])
           return auth.$authWithPassword(creds, opts);
       };
 
-      this.createAccount = function(email, pass, opts) {
-          return auth.$createUser({email: email, password: pass})
-            .then(function() {
-              // authenticate so we have permission to write to Firebase
-              return fns.passwordLogin({email: email, password: pass}, opts);
-            })
-            .then(function(user) {
-              // store user data in Firebase after creating account
-              return createProfile(user.uid, email/*, name*/).then(function() {
-                return user;
-              });
-            });
-        };
-
         this.changePassword = function (email, oldpass, newpass) {
           return auth.$changePassword({email: email, oldPassword: oldpass, newPassword: newpass});
         };
@@ -101,9 +96,7 @@ angular.module('firebase.utils', ['firebase', 'firebase.config'])
         };
 
         this.removeUser = function(email, pass, uid) {
-          var userRef = getFirebaseRef('users/' + uid)
-          console.log(userRef)
-          userRef.remove(function(error) {
+          FBREF.child('users').child(uid).remove(function(error) {
             if(error) {
               console.log("Error:",error)
             } else {

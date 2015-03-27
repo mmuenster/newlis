@@ -7,7 +7,7 @@
  * Manages authentication to any active providers.
  */
 angular.module('newlisApp')
-  .controller('LoginCtrl', function ($scope, firebaseUtils, $state) {
+  .controller('LoginCtrl', function ($scope, firebaseUtils, $state, $location) {
     
     if(firebaseUtils.isAuth()) {
       redirect();
@@ -35,7 +35,7 @@ angular.module('newlisApp')
     };
     
     function redirect() {
-      $state.go('home');
+      $state.go('home'); 
     }
 
     function showError(err) {

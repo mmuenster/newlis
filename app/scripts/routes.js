@@ -126,12 +126,7 @@ angular.module('newlisApp')
       // });
 
       $rootScope.$on('$stateChangeError', function(e, next, prev, err) {
-          // Redirect user to our login page
-          // console.log('in stateChangeError')
-          // console.log(e)
-          // console.log(next)
-          // console.log(prev)
-          // console.log(err)
+          console.log("$stateChangeError")
           $state.go(loginRedirectState);
         });
 

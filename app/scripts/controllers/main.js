@@ -9,7 +9,9 @@
  */
 angular.module('newlisApp')
   .controller('MainCtrl', function ($scope, user, firebaseUtils, $state) {
-    $scope.user = user;
+    firebaseUtils.getUser().then(function(data){
+      $scope.user = data;
+    });
     $scope.awesomeThings = [1,2,33]
     $scope.logout = firebaseUtils.logout;
 
@@ -20,7 +22,7 @@ angular.module('newlisApp')
 
     $scope.isAdmin = function() {
       if(user.profile.roles) { 
-        return (user.profile.roles.search("Admin") > 0) ? true : false;
+        return (user.profile.roles.indexOf('Admin') > -1) ? true : false;
       } else {
      	return false
       }

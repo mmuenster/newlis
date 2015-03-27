@@ -11,6 +11,10 @@ angular.module('newlisApp')
   .controller('EdituserCtrl', function ($scope, $stateParams, firebaseUtils, $timeout) {
     $scope.data = firebaseUtils.syncObject('users/' + $stateParams.uid);
 
+    $scope.saveUser = function() {
+      $scope.data.$save();
+    }
+    
   	$scope.changePassword = function(oldPass, newPass, confirm) {
       $scope.err = null;
       if( !oldPass || !newPass ) {

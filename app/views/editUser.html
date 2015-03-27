@@ -1,16 +1,52 @@
 <div class="col-md-4">
-  <h3>Profile</h3>
-	<div ng-repeat="(key,value) in data">
+<form class="form">
 
-	  <form role="form">
-	    <p class="form-group">
-	      <label>{{key}}</label>
-	      <br />{{value}}
-	    </p>
-	</form>
-	</div>
+<!-- Form Name -->
+<h3>Edit User</h3>
+
+<h3>{{data.email}}</h3>
+
+<!-- Text input-->
+<div class="control-group">
+  <label class="control-label" for="name">Name</label>
+  <div class="controls">
+    <input id="name" ng-model="data.name" name="name" type="text" placeholder="Full Name" class="form-control" required="">
+    
+  </div>
 </div>
 
+<!-- Select Multiple -->
+<div class="control-group">
+  <label class="control-label" for="roles">Roles</label>
+  <div class="controls">
+    <select id="roles" ng-model="data.roles" name="roles" class="form-control" multiple="multiple">
+      <option>Lab</option>
+      <option>Client Service</option>
+      <option>Pathologist</option>
+      <option>Admin</option>
+    </select>
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="control-group">
+  <label class="control-label" for="timezone">Time Zone</label>
+  <div class="controls">
+    <input id="timezone" ng-model="data.timeZone" name="timezone" type="text" placeholder="Time Zone in GMT" class="form-control">
+    
+  </div>
+</div>
+
+<!-- Button -->
+<div class="control-group">
+  <label class="control-label" for="submit"></label>
+  <div class="controls">
+    <button id="submit" ng-click="saveUser()" name="submit" class="btn btn-primary">Save User</button>
+  </div>
+</div>
+
+</form>
+</div>
 
 <div class="col-md-4">
 <form role="form">
