@@ -13,5 +13,6 @@ angular.module('newlisApp', [
     'firebase',
     'firebase.config',
     'firebase.utils',
+    'ngAnimate'
   ]);
 

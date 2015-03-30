@@ -26,12 +26,14 @@ angular.module('firebase.utils', ['firebase', 'firebase.config'])
       this.FBREF = FBREF;
 
       this.createNewUser = function(user) {
-        console.log(user)
+        var deferred = $q.defer();
         $firebaseAuth(FBREF).$createUser(user).then(function(data) {
-          FBREF.child('users').child(data.uid).set(user)
+          FBREF.child('users').child(data.uid).set(user);
+          deferred.resolve("User " + user.name + " successfully created.")
         }, function(error){
-          console.log(error)
+          deferred.reject(error.message);
         });
+        return deferred.promise;
       }
 
       this.isAuth = function() {
@@ -96,14 +98,19 @@ angular.module('firebase.utils', ['firebase', 'firebase.config'])
         };
 
         this.removeUser = function(email, pass, uid) {
+          var deferred = $q.defer();
           FBREF.child('users').child(uid).remove(function(error) {
             if(error) {
-              console.log("Error:",error)
+              deferred.reject("Error:",error)
             } else {
-              return auth.$removeUser({email: email, password: pass});
-            }
-          });
-        };
+              auth.$removeUser({email: email, password: pass}).then( 
+                function(message) { deferred.resolve(message) },
+                function(error) { deferred.reject(error) }
+                );
+              }
+            });
+          return deferred.promise;
+          };
 
       }]);
     // return {

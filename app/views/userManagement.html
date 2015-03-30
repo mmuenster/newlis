@@ -4,7 +4,7 @@
 </div>
 
 <div class="row-fluid">
-	<button class="btn btn-primary btn-sm" ui-sref="home.userManagement.addNewUser">Add New User</button>
+	<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addUserModal">Add New User</button>
 </div>
 
 <div class="row-fluid">
@@ -15,12 +15,209 @@
 	  	<td>Roles</td>
 	  </thead>
 	  <tr ng-repeat="(key,value) in users track by $index">
-	    <td><a ui-sref="home.userManagement.editUser({uid: '{{key}}'})">{{ value.email }}</a></td>
+	    <td><a data-toggle="modal" data-target="#editUserModal" >{{ value.email }}</a></td> <!-- ui-sref="home.userManagement.editUser({uid: '{{key}}'})" -->
 	    <td>{{ value.name }}</td>
 	    <td>{{ value.roles }}</td>
-	    <td><button class="btn btn-sm btn-danger" ng-hide="user.profile.email==value.email"  ng-click="removeUser(value.email, value.password, key, value.name)">Delete</button></td>
+	    <td><button class="btn btn-sm btn-danger" ng-hide="user.profile.email==value.email"  data-toggle="modal" data-target="#deleteUserModal" ng-click="setModalData(key, value)">Delete</button></td>
 	  </tr>
 	</table>
 
 	<ui-view></ui-view>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="myModalLabel">Edit User: {{data.email}}</h3>
+      </div>
+      <div class="modal-body">
+			<div class="col-md-4">
+			<form class="form">
+
+			<!-- Text input-->
+			<div class="control-group">
+			  <label class="control-label" for="name">Name</label>
+			  <div class="controls">
+			    <input id="name" ng-model="data.name" name="name" type="text" placeholder="Full Name" class="form-control" required="">
+			    
+			  </div>
+			</div>
+
+			<!-- Select Multiple -->
+			<div class="control-group">
+			  <label class="control-label" for="roles">Roles</label>
+			  <div class="controls">
+			    <select id="roles" ng-model="data.roles" name="roles" class="form-control" multiple="multiple">
+			      <option>Lab</option>
+			      <option>Client Service</option>
+			      <option>Pathologist</option>
+			      <option>Admin</option>
+			    </select>
+			  </div>
+			</div>
+
+			<!-- Text input-->
+			<div class="control-group">
+			  <label class="control-label" for="timezone">Time Zone</label>
+			  <div class="controls">
+			    <input id="timezone" ng-model="data.timeZone" name="timezone" type="text" placeholder="Time Zone in GMT" class="form-control">
+			    
+			  </div>
+			</div>
+
+			<!-- Button -->
+			<div class="control-group">
+			  <label class="control-label" for="submit"></label>
+			  <div class="controls">
+			    <button id="submit" ng-click="saveUser()" name="submit" class="btn btn-primary">Save User</button>
+			  </div>
+			</div>
+
+			</form>
+			</div>
+
+			<div class="col-md-4">
+			<form role="form">
+			  <h3>Change Password</h3>
+
+			  <p class="form-group">
+			    <label>Old Password:</label>
+			    <input type="password" ng-keypress="clear()" ng-model="oldpass" class="form-control" />
+			  </p>
+
+			  <p class="form-group">
+			    <label>New Password:</label>
+			    <input type="password" ng-keypress="clear()" ng-model="newpass" class="form-control" />
+			  </p>
+
+			  <p class="form-group">
+			    <label>Confirm New Password:</label>
+			    <input type="password" ng-keypress="clear()" ng-model="confirm" class="form-control" />
+			  </p>
+
+			  <button class="btn btn-primary" ng-click="changePassword(oldpass, newpass, confirm)">change password</button>
+
+			  <p class="error" ng-show="err">{{err}}</p>
+			  <p class="good" ng-show="msg">{{msg}}</p>
+			</form>
+			</div>
+
+			<div class="col-md-4">
+			<form>
+			  <h3>Change Email</h3>
+
+			  <p class="form-group">
+			    <label>New Email:</label>
+			    <input type="text" ng-keypress="clear()" ng-model="newEmail" class="form-control" />
+			  </p>
+
+			  <p class="form-group">
+			    <label>Password:</label>
+			    <input type="password" ng-keypress="clear()" ng-model="pass" class="form-control" />
+			  </p>
+
+			  <button class="btn btn-primary" ng-click="changeEmail(pass, newEmail)">update email</button>
+			</form>
+			</div>
+
+			</div>
+			<p class="clearfix"></p>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<form name="addUserForm" class="form-horizontal">
+	<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h3 class="modal-title" id="myModalLabel">Add New User</h3>
+	      </div>
+	      <div class="modal-body">
+				<fieldset>
+
+				<!-- Text input-->
+				<div class="control-group">
+				  <label class="control-label" for="email">New User Email</label>
+				  <div class="controls">
+				    <input id="email" ng-model="addNew.email" name="email" type="text" placeholder="Email" class="form-control" required>
+				    
+				  </div>
+				</div>
+
+				<!-- Password input-->
+				<div class="control-group">
+				  <label class="control-label" for="password">New User Password</label>
+				  <div class="controls">
+				    <input id="password" ng-model="addNew.password" name="password" type="password" placeholder="Password" class="form-control" required>
+				    
+				  </div>
+				</div>
+
+				<!-- Text input-->
+				<div class="control-group">
+				  <label class="control-label" for="name">Name</label>
+				  <div class="controls">
+				    <input id="name" ng-model="addNew.name" name="name" type="text" placeholder="Full Name" class="form-control" required>
+				    
+				  </div>
+				</div>
+
+				<!-- Select Multiple -->
+				<div class="control-group">
+				  <label class="control-label" for="roles">Roles</label>
+				  <div class="controls">
+				    <select id="roles" ng-model="addNew.roles" name="roles" class="form-control" multiple="multiple" required>
+				      <option>Lab</option>
+				      <option>Client Services</option>
+				      <option>Pathologist</option>
+				      <option>Admin</option>
+				    </select>
+				  </div>
+				</div>
+		  </div>
+
+		  <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <input id="submit" type="submit" value="Save" data-dismiss="modal" name="submit" class="btn btn-primary" ng-disabled="addUserForm.$dirty && addUserForm.$invalid" ng-click="addNewUser()"/>
+	      </div>
+
+		<p class="clearfix"></p>
+		</fieldset>
+		</div>
+
+
+	    </div>
+	  </div>
+	</div>
+</form>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="myModalLabel">Delete User: {{modalData.email}}</h3>
+      </div>
+      <div class="modal-body">
+      <h4>Are you sure you want to delete the user, {{modalData.name}}</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="removeUser(modalData)" data-dismiss="modal">Delete user</button>
+      </div>
+    </div>
+  </div>
 </div>
