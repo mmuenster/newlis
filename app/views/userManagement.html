@@ -1,10 +1,7 @@
 
 <div class="row-fluid">
-	<div ng-repeat="message in messages" class="alert alert-{{message.type}}">{{message.text}}</div>
-</div>
-
-<div class="row-fluid">
-	<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addUserModal">Add New User</button>
+	<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addUserModal" ng-click="setModalData({})">Add New User</button>
+	<input type="search" ng-model="q" placeholder="Search users..." />
 </div>
 
 <div class="row-fluid">
@@ -14,15 +11,21 @@
 	  	<td>Name</td>
 	  	<td>Roles</td>
 	  </thead>
-	  <tr ng-repeat="(key,value) in users track by $index">
-	    <td><a data-toggle="modal" data-target="#editUserModal" >{{ value.email }}</a></td> <!-- ui-sref="home.userManagement.editUser({uid: '{{key}}'})" -->
-	    <td>{{ value.name }}</td>
-	    <td>{{ value.roles }}</td>
-	    <td><button class="btn btn-sm btn-danger" ng-hide="user.profile.email==value.email"  data-toggle="modal" data-target="#deleteUserModal" ng-click="setModalData(key, value)">Delete</button></td>
+	  <tr ng-repeat="thisUser in users | filter:q ">
+	    <td>
+	    	<a data-toggle="modal" ng-click="setModalData(thisUser)" ng-hide="user.profile.email==thisUser.email" data-target="#editUserModal" >{{ thisUser.email }}</a>
+	    	<p ng-show="user.profile.email==thisUser.email"> {{ thisUser.email}}</p>
+	    </td> 
+	    <td>{{ thisUser.name }}</td>
+	    <td>{{ thisUser.roles }}</td>
+	    <td><button class="btn btn-sm btn-danger" ng-hide="user.profile.email==thisUser.email"  data-toggle="modal" data-target="#deleteUserModal" ng-click="setModalData(thisUser)">Delete</button></td>
 	  </tr>
 	</table>
 
-	<ui-view></ui-view>
+<div class="row-fluid">
+	<div ng-repeat="message in messages" class="alert alert-{{message.type}}">{{message.text}}</div>
+</div>
+
 </div>
 
 <!-- Edit User Modal -->
@@ -31,7 +34,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title" id="myModalLabel">Edit User: {{data.email}}</h3>
+        <h3 class="modal-title" id="myModalLabel">Edit User: {{modalData.email}}</h3>
       </div>
       <div class="modal-body">
 			<div class="col-md-4">
@@ -41,7 +44,7 @@
 			<div class="control-group">
 			  <label class="control-label" for="name">Name</label>
 			  <div class="controls">
-			    <input id="name" ng-model="data.name" name="name" type="text" placeholder="Full Name" class="form-control" required="">
+			    <input id="name" ng-model="modalData.name" name="name" type="text" placeholder="Full Name" class="form-control" required="">
 			    
 			  </div>
 			</div>
@@ -50,7 +53,7 @@
 			<div class="control-group">
 			  <label class="control-label" for="roles">Roles</label>
 			  <div class="controls">
-			    <select id="roles" ng-model="data.roles" name="roles" class="form-control" multiple="multiple">
+			    <select id="roles" ng-model="modalData.roles" name="roles" class="form-control" multiple="multiple">
 			      <option>Lab</option>
 			      <option>Client Service</option>
 			      <option>Pathologist</option>
@@ -59,20 +62,11 @@
 			  </div>
 			</div>
 
-			<!-- Text input-->
-			<div class="control-group">
-			  <label class="control-label" for="timezone">Time Zone</label>
-			  <div class="controls">
-			    <input id="timezone" ng-model="data.timeZone" name="timezone" type="text" placeholder="Time Zone in GMT" class="form-control">
-			    
-			  </div>
-			</div>
-
 			<!-- Button -->
 			<div class="control-group">
 			  <label class="control-label" for="submit"></label>
 			  <div class="controls">
-			    <button id="submit" ng-click="saveUser()" name="submit" class="btn btn-primary">Save User</button>
+			    <button id="submit" ng-click="saveUser()" data-dismiss="modal" name="submit" class="btn btn-primary">Save User</button>
 			  </div>
 			</div>
 
@@ -84,11 +78,6 @@
 			  <h3>Change Password</h3>
 
 			  <p class="form-group">
-			    <label>Old Password:</label>
-			    <input type="password" ng-keypress="clear()" ng-model="oldpass" class="form-control" />
-			  </p>
-
-			  <p class="form-group">
 			    <label>New Password:</label>
 			    <input type="password" ng-keypress="clear()" ng-model="newpass" class="form-control" />
 			  </p>
@@ -98,7 +87,7 @@
 			    <input type="password" ng-keypress="clear()" ng-model="confirm" class="form-control" />
 			  </p>
 
-			  <button class="btn btn-primary" ng-click="changePassword(oldpass, newpass, confirm)">change password</button>
+			  <button class="btn btn-primary" data-dismiss="modal" ng-click="changePassword()">change password</button>
 
 			  <p class="error" ng-show="err">{{err}}</p>
 			  <p class="good" ng-show="msg">{{msg}}</p>
@@ -114,12 +103,7 @@
 			    <input type="text" ng-keypress="clear()" ng-model="newEmail" class="form-control" />
 			  </p>
 
-			  <p class="form-group">
-			    <label>Password:</label>
-			    <input type="password" ng-keypress="clear()" ng-model="pass" class="form-control" />
-			  </p>
-
-			  <button class="btn btn-primary" ng-click="changeEmail(pass, newEmail)">update email</button>
+			  <button class="btn btn-primary" data-dismiss="modal" ng-click="changeEmail()">update email</button>
 			</form>
 			</div>
 
@@ -128,8 +112,7 @@
 
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
@@ -149,18 +132,18 @@
 
 				<!-- Text input-->
 				<div class="control-group">
-				  <label class="control-label" for="email">New User Email</label>
+				  <label class="control-label" for="newemail">New User Email</label>
 				  <div class="controls">
-				    <input id="email" ng-model="addNew.email" name="email" type="text" placeholder="Email" class="form-control" required>
+				    <input id="newemail" ng-model="addNew.email" name="newemail" type="text" placeholder="Email" class="form-control" required>
 				    
 				  </div>
 				</div>
 
 				<!-- Password input-->
 				<div class="control-group">
-				  <label class="control-label" for="password">New User Password</label>
+				  <label class="control-label" for="newpassword">New User Password</label>
 				  <div class="controls">
-				    <input id="password" ng-model="addNew.password" name="password" type="password" placeholder="Password" class="form-control" required>
+				    <input id="newpassword" ng-model="addNew.password" name="newpassword" type="password" placeholder="Password" class="form-control" required>
 				    
 				  </div>
 				</div>

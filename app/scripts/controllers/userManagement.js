@@ -13,28 +13,72 @@ angular.module('newlisApp')
       $state.go('uiHome')
     }
 
-    $scope.users = firebaseUtils.syncObject('/users');
+    $scope.users = firebaseUtils.syncArray('/users');
 
     $scope.messages = [];
 
-    $scope.setModalData = function(key,value) {
-      $scope.modalData = value;
-      $scope.modalData.uid = key;
+    $scope.setModalData = function(user) {
+      $scope.modalData = angular.copy(user);
+      $scope.newpass = "";
+      $scope.confirm = "";
+      $scope.newEmail = "";
     }
 
     $scope.removeUser=  function(user) {
-      firebaseUtils.removeUser(user.email,user.password,user.uid)
+      firebaseUtils.removeUser(user.email,user.password,user.$id)
         .then(
           function(message) { success(user.name + " deleted sucessfully!")},
           function(message) { error(message)}
         );
     };   
 
-    $scope.data = firebaseUtils.syncObject('users/' + "simplelogin:56" );
-
     $scope.saveUser = function() {
-      $scope.data.$save();
+      var x = $scope.users.$indexFor($scope.modalData.$id);
+      $scope.users[x]=$scope.modalData;
+      $scope.users.$save(x).then(
+        function(message) { success ("Changes to user " + $scope.users[x].name + " saved sucessfully.") },
+        function(error) { error (message) }
+        );
     }
+
+    $scope.changePassword = function() {
+      $scope.err = null;
+      if( !$scope.confirm || !$scope.newpass ) {
+        error('Please enter all fields');
+      }
+      else if( $scope.newpass !== $scope.confirm ) {
+        error('Passwords do not match');
+      }
+      else {
+        firebaseUtils.changePassword($scope.modalData.email, $scope.modalData.password, $scope.newpass)
+          .then(
+            function() { 
+              var x = $scope.users.$indexFor($scope.modalData.$id);
+              $scope.users[x].password = $scope.newpass;
+              $scope.users.$save(x).then(
+                function(message) { success ("Password for user " + $scope.users[x].name + " changed sucessfully.") },
+                function(message) { error(message) }
+                )},
+            function(message) { error(message) }
+          );
+      }
+    };
+
+    $scope.changeEmail = function() {
+      $scope.err = null;
+      firebaseUtils.changeEmail($scope.modalData.password, $scope.newEmail, $scope.modalData.email)
+        .then(
+          function() { 
+            var x = $scope.users.$indexFor($scope.modalData.$id);
+            $scope.users[x].email = $scope.newEmail;
+            $scope.users.$save(x).then(
+              function(message) { success ("Email for user " + $scope.users[x].name + " changed sucessfully.") },
+              function(message) { error(message) }
+              )},
+          function(message) { error(message) }
+        );
+    };
+
 
     $scope.addNewUser = function() {
       firebaseUtils.createNewUser(
@@ -43,38 +87,12 @@ angular.module('newlisApp')
           name:$scope.addNew.name, 
           roles:$scope.addNew.roles})
       .then(
-        function(message) {success(message)}, 
+        function(message) {success("User " + $scope.addNew.name + " created sucessfully!")}, 
         function(message) {error(message)}
       );
     }
 
 
-    $scope.changePassword = function(oldPass, newPass, confirm) {
-      $scope.err = null;
-      if( !oldPass || !newPass ) {
-        error('Please enter all fields');
-      }
-      else if( newPass !== confirm ) {
-        error('Passwords do not match');
-      }
-      else {
-        simpleLogin.changePassword($scope.data.email, oldPass, newPass)
-          .then(function() {
-            success('Password changed');
-          }, error);
-      }
-    };
-
-    $scope.changeEmail = function(pass, newEmail) {
-      $scope.err = null;
-      simpleLogin.changeEmail(pass, newEmail, $scope.data.email)
-        .then(function() {
-          $scope.data.email = newEmail;
-          $scope.data.$save();
-          success('Email changed');
-        })
-        .catch(error);
-    };
 
     function error(err) {
       alert(err, 'danger');
