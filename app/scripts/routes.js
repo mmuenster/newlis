@@ -84,16 +84,6 @@ angular.module('newlisApp')
       controller: 'UserManagementController',
       url: 'userManagement',
     })
-    .state('home.userManagement.editUser', {
-      templateUrl: 'views/editUser.html',
-      controller: 'EdituserCtrl',
-      url: '/:uid'
-    })
-    .state('home.userManagement.addNewUser', {
-      templateUrl: 'views/addNewUser.html',
-      controller: 'AddnewuserCtrl',
-      url: '/addNewUser'
-    })
     .state('home.caseEdit', {
       templateUrl: 'views/caseEdit.html',
       controller: 'CaseeditCtrl',

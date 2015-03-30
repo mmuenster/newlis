@@ -12,9 +12,30 @@ angular.module('newlisApp')
     firebaseUtils.getUser().then(function(data){
       $scope.user = data;
     });
-    $scope.awesomeThings = [1,2,33]
+
+    $scope.cases = firebaseUtils.syncArray('/cases');
+
+    $scope.orderBy = "receivedDate";
+    $scope.reverse = false;
+    $scope.orderString = "receivedDate";
+
     $scope.logout = firebaseUtils.logout;
 
+    $scope.changeSortOrder = function(sortKey) {
+      if(sortKey==$scope.orderBy) {
+        $scope.reverse = !$scope.reverse
+        if ($scope.reverse) {
+          $scope.orderString = "-" + $scope.orderBy;
+        } else {
+          $scope.orderString = $scope.orderBy;
+        }
+      } else {
+        $scope.orderBy = sortKey;
+        $scope.reverse = false;
+        $scope.orderString = $scope.orderBy;
+      }
+    }
+    
     $scope.search = function(q) {
       $state.go('home.caseEdit', {caseNum:q})
       $scope.searchText = "";

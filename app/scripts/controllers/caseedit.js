@@ -8,7 +8,7 @@
  * Controller of the newlisApp
  */
 angular.module('newlisApp')
-  .controller('CaseeditCtrl', function ($scope, $stateParams, $firebase) {
+  .controller('CaseeditCtrl', function ($scope, $stateParams, $firebaseObject) {
       var fb = new Firebase('https://dazzling-torch-3393.firebaseio.com');
 	  var caseDataRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/CaseData');
 	  var queueRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/AveroQueue/mmuenster');
@@ -16,16 +16,16 @@ angular.module('newlisApp')
 	  var frontHelpersRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/frontHelpers');  
 	  var marginHelpersRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/marginHelpers');
 	  var commentHelpersRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/commentHelpers');
-	  var frontHelpers = $firebase(frontHelpersRef).$asObject();
-	  var marginHelpers = $firebase(marginHelpersRef).$asObject();
-	  var commentHelpers = $firebase(commentHelpersRef).$asObject();  
-	  var dxCodes = $firebase(dxCodesRef).$asObject();
-	  var caseDataSync = $firebase(caseDataRef);
-	  $scope.messages = caseDataSync.$asObject();
-	  $scope.caseToEdit = '';
-	  var queueSync = $firebase(queueRef);
+	  var frontHelpers = $firebaseObject(frontHelpersRef);
+	  var marginHelpers = $firebaseObject(marginHelpersRef);
+	  var commentHelpers = $firebaseObject(commentHelpersRef);  
+	  var dxCodes = $firebaseObject(dxCodesRef);
+	  var caseDataSync = caseDataRef;
+	  $scope.messages = $firebaseObject(caseDataRef);
+	  $scope.caseToEdit = $stateParams.caseNum;
+	  var queueSync = queueRef;
 	  var counter = 0;
-	  
+	  console.log($stateParams.caseNum)
 	  dxCodes.$loaded(function() {
 	    console.log(dxCodes.bccn);
 	  }, function(error) {
