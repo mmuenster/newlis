@@ -1,8 +1,11 @@
+<div class="col-md-6">
   <div class="main container">
 
     <input type="submit" hidden id="loadFields" value="Load (alt-h)" accesskey="h" ng-click="loadFields()">
     <input type="button" hidden value="Next Blank (alt-g)" accesskey="g" ng-click="gotoNextBlank()">
     <input type="button" hidden value="Enter code (alt-j)" accesskey="j" ng-click="dxCodeEntry()">
+    <button id="previewPDF" ng-click="previewPDF(editFields)" accesskey="p">Preview</button>
+    <button id="signout" ng-click="signout(editFields)" accesskey="o">Signout</button>
 
     <div>
       <form ng-show="editFields.caseNumber" name="edit" ng-submit="submitCase()">
@@ -24,7 +27,12 @@
         Photo Caption:<br/><input class="form-control" type="text" ng-model="editFields.photoCaption"></input>
         Comment:<br/><textarea class="form-control" rows="2" cols="60" type="text" name="commentLine" ng-model="editFields['commentTextArea']"></textarea><br/>
         Microrosopic Description:<br/><textarea class="form-control" rows="2" cols="60" type="text" name="microscopicDescription" ng-model="editFields['microscopicDescriptionTextArea']"></textarea><br/>
-        <input type="submit" id="submitCase" value="Submit" accesskey="s"/> <text type="text" ng-model="submitMessage"></text>
+        <input type="submit" id="submitCase" value="Save" accesskey="s"/> 
+        <text type="text" ng-model="submitMessage"></text>
       </form>
     </div>  
   </div>
+</div>
+<div ng-show="preview" class="col-md-6">
+  <iframe ng-src="{{iframeURL}}" width="600" height="775"></iframe>
+</div>

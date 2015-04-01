@@ -1,7 +1,9 @@
 {
   "name": "newlis",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "pdfkit": "^0.7.1"
+  },
   "devDependencies": {
     "chalk": "^0.4.0",
     "grunt": "^0.4.5",

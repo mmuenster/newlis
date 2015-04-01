@@ -8,7 +8,8 @@
  * Controller of the newlisApp
  */
 angular.module('newlisApp')
-  .controller('CaseeditCtrl', function ($scope, $stateParams, $firebaseObject) {
+  .controller('CaseeditCtrl', function ($scope, $stateParams, $firebaseObject, $sce, $q) {
+
       var fb = new Firebase('https://dazzling-torch-3393.firebaseio.com');
 	  var caseDataRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/CaseData');
 	  var queueRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/AveroQueue/mmuenster');
@@ -25,23 +26,61 @@ angular.module('newlisApp')
 	  $scope.caseToEdit = $stateParams.caseNum;
 	  var queueSync = queueRef;
 	  var counter = 0;
-	  console.log($stateParams.caseNum)
-	  dxCodes.$loaded(function() {
-	    console.log(dxCodes.bccn);
-	  }, function(error) {
-	    console.error('Error:', error);
-	  });
+	  $scope.preview = false;
+	  $scope.iframeURL = "";
+	  $scope.$watch(function() { return $scope.editFields }, function() { $scope.preview = false }, true);
+
+	  // dxCodes.$loaded(function() {
+	  //   console.log(dxCodes.bccn);
+	  // }, function(error) {
+	  //   console.error('Error:', error);
+	  // });
+
+	$scope.previewPDF =  function(data) {
+		
+		console.log("One time...");
+		var doc = new PDFDocument();
+	    var stream = doc.pipe(blobStream());
+
+		// draw some text
+		doc.fontSize(25)
+		   .text(data.caseNumber, 100, 80)
+		   .text(data.name)
+		   .text(data.diagnosisTextArea);
+
+		// end and display the document in the iframe to the right
+		doc.end();
+
+		stream.on('finish', function() {
+		  $scope.iframeURL =  $sce.trustAsResourceUrl( stream.toBlobURL('application/pdf') );
+		  $scope.preview = true;
+		  $scope.$apply();
+		});    	
+	}
+
+	$scope.submitCase = function() {
+
+	    $scope.messages[$scope.caseToEdit] = $scope.editFields;
+	    $scope.messages.$save();
+	    $scope.submitMessage = 'Submit ' + $scope.caseToEdit + ' succeeded';
+	    queueSync.$push({ 'action':'writeCase', 'caseNumber':$scope.caseToEdit, 'doctor':'mmuenster'});
+	    $scope.editFields = {};
+	    $scope.caseToEdit = '';
+	    $document[ 0 ].getElementById('input_codeToEdit').focus();
+	  };
   
     $scope.messages.$loaded(function() {
 	    $scope.editFields = $scope.messages[$stateParams.caseNum];
+
 	    if($scope.editFields.diagnosisTextArea==='') {
 	      $scope.loadFields();
-	      setTimeout(function() { $scope.gotoNextBlank(); }, 300);
+	      setTimeout(function() { 
+	      	$scope.gotoNextBlank();
+ 		  }, 300);
 	    }
 	});
 
-
-	  $scope.dxCodeEntry = function() {
+	$scope.dxCodeEntry = function() {
 	    var baseCodeThisCase, useMicro, useICD9, j, rawDXCode, lastCodeUsed, frontHelpersThisCase, finishPos;
 	    var x = document.querySelector('textarea#diagnosisTextArea');
 	    var startPos= x.selectionStart;
@@ -97,7 +136,7 @@ angular.module('newlisApp')
 	      buildingText += '.';  //marginCodes in database contain a period.  If not using one, add period.
 	    }
 
-	//Build comment if there are comment helpers, a comment for the base code, or a micro
+		//Build comment if there are comment helpers, a comment for the base code, or a micro
 	    var commentNeeded = commentHelpersThisCase || dxCodes[baseCodeThisCase][3] || useMicro;
 	    if(commentNeeded) {
 	      buildingText += '\n\nComment:  ';
@@ -138,9 +177,9 @@ angular.module('newlisApp')
 	    $scope.editFields.diagnosisTextArea = firstHalf + buildingText + secondHalf;
 	    
 	    setTimeout(function() { $scope.gotoNextBlank(); }, 400);
-	  };
+	};
 
-	  $scope.gotoNextBlank = function() {
+	$scope.gotoNextBlank = function() {
 	    var currentSelectionStart = document.getElementById('diagnosisTextArea').selectionStart;
 	    var input = document.getElementById('diagnosisTextArea');
 	    var n = $scope.editFields.diagnosisTextArea.search(/[*][*][*]/);
@@ -148,9 +187,9 @@ angular.module('newlisApp')
 	      input.focus();
 	      input.setSelectionRange(n, n+3);
 	    }
-	  };
+	};
 
-	  $scope.loadFields = function() {
+	$scope.loadFields = function() {
 	    var headerText = '';
 	    var site = '';
 	    var grossPhrase = '';
@@ -169,18 +208,9 @@ angular.module('newlisApp')
 	      }
 	    $scope.editFields.diagnosisTextArea = headerText;
 	    $scope.editFields.photoCaption = $scope.editFields.caseNumber + ' A';
-	  };
+	};
 
-	  $scope.submitCase = function() {
-	    $scope.messages[$scope.caseToEdit] = $scope.editFields;
-	    $scope.messages.$save();
-	    $scope.submitMessage = 'Submit ' + $scope.caseToEdit + ' succeeded';
-	    queueSync.$push({ 'action':'writeCase', 'caseNumber':$scope.caseToEdit, 'doctor':'mmuenster'});
-	    $scope.editFields = {};
-	    $scope.caseToEdit = '';
-	    $document[ 0 ].getElementById('input_codeToEdit').focus();
-	  };
-	});
+});
 
 	function procedureTextFromGross(gross) {
 	  var shavePos = gross.search(/(sb.)/) + gross.search(/ shave /) + 2;
@@ -194,8 +224,7 @@ angular.module('newlisApp')
 	  return '';
 	}
 
-	function toTitleCase(str)
-	{
-	    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-	}
+	function toTitleCase(str) {
+		    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+		}
 
