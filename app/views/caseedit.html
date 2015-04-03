@@ -1,23 +1,52 @@
 <div class="col-md-6">
-  <div class="main container">
+  <div class="row">
 
     <input type="submit" hidden id="loadFields" value="Load (alt-h)" accesskey="h" ng-click="loadFields()">
     <input type="button" hidden value="Next Blank (alt-g)" accesskey="g" ng-click="gotoNextBlank()">
     <input type="button" hidden value="Enter code (alt-j)" accesskey="j" ng-click="dxCodeEntry()">
-    <button id="previewPDF" ng-click="previewPDF(editFields)" accesskey="p">Preview</button>
-    <button id="signout" ng-click="signout(editFields)" accesskey="o">Signout</button>
+    <button id="previewPDF" class="btn" ng-click="previewPDF(editFields)" accesskey="p">Preview</button>
+    <button id="signout" class="btn" ng-click="signout(editFields)" accesskey="o">Signout</button>
+    </div>
 
-    <div>
-      <form ng-show="editFields.caseNumber" name="edit" ng-submit="submitCase()">
-          <h1>{{editFields.caseNumber}}</h1>
-          <h3 id="patientName">{{editFields.name}}</h3>
-            Collected:{{editFields.collectionDate}}    Received: {{editFields.receivedDate}}</span></br>   
-          Age: <span id="patientAge">{{editFields.age}} year(s) old {{editFields.gender}}</span></br>
-          Doctor: <span id="doctor">{{editFields.doctor}} @ {{editFields.client}}</span></br>
-          Clinical Information: <input class="form-control" type="text" ng-model="editFields.clinicalInformation"></br>
+
+      <form class="form" ng-show="editFields.caseNumber" name="edit" ng-submit="submitCase()">
+          <div class="row bg-primary">
+            <div class="col-md-6">
+              <h1 id="patientName">{{editFields.caseNumber}}</h1>
+            </div>
+            <div class="col-md-6">
+              <h1>{{editFields.name}}</h1>
+            </div>
+          </div>
+          <div class="row bg-success">
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <h4><strong>Collected: </strong>  
+                <strong>Age: </strong>
+                <strong>Doctor: </strong> </h4> 
+              </div>
+              <div class="col-md-6">
+                <h4>{{editFields.collectionDate}}</br>
+                {{editFields.age}}</br>
+                {{editFields.doctor}}</h4>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <h4><strong>Received: </strong>{{editFields.receivedDate}}</br>
+              <strong>Gender: </strong>{{editFields.gender}}</br>
+              <strong>Client: </strong>{{editFields.client}}</br></h4>
+            </div>
+            <div class="col-md-4">
+            <h4><strong>DOB: </strong>{{editFields.dob}}
+            </div>
+          </div>
+          <div class="row">
+            <strong>Clinical Information: </strong><input class="form-control" type="text" ng-model="editFields.clinicalInformation">
+          </div>
+
         <ul>
-          <li ng-repeat="(keys, values) in editFields.jars">
-            {{keys}}
+          <li class="form-group" ng-repeat="(keys, values) in editFields.jars">
+            <p>{{keys}}</p>
             <input class="form-control" type="text" ng-model="values.site"></input>  
             <textarea class="form-control" type="text" ng-model = "values.grossDescription"></textarea>
           </li>
@@ -30,7 +59,7 @@
         <input type="submit" id="submitCase" value="Save" accesskey="s"/> 
         <text type="text" ng-model="submitMessage"></text>
       </form>
-    </div>  
+
   </div>
 </div>
 <div ng-show="preview" class="col-md-6">
