@@ -12,33 +12,30 @@ angular.module('newlisApp')
 
       var fb = new Firebase('https://dazzling-torch-3393.firebaseio.com');
 	  var caseDataRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/CaseData');
+	  var caseDataSync = caseDataRef;
+	  $scope.caseToEdit = $firebaseObject(caseDataRef.child($stateParams.caseNum))
+	  $scope.caseToEdit.$loaded().then( function() {
+	  	$scope.editFields = angular.copy($scope.caseToEdit)
+	  });
+
+	  var queueSync = queueRef;
+	  var counter = 0;
+	  $scope.preview = false;
+	  $scope.iframeURL = "";
+	  // $scope.$watch(function() { return $scope.editFields }, function() { $scope.preview = false }, true);
+
 	  var queueRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/AveroQueue/mmuenster');
 	  var dxCodesRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/newDiagnosisCodes');
 	  var frontHelpersRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/frontHelpers');  
 	  var marginHelpersRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/marginHelpers');
 	  var commentHelpersRef = new Firebase('https://dazzling-torch-3393.firebaseio.com/commentHelpers');
+
 	  var frontHelpers = $firebaseObject(frontHelpersRef);
 	  var marginHelpers = $firebaseObject(marginHelpersRef);
 	  var commentHelpers = $firebaseObject(commentHelpersRef);  
 	  var dxCodes = $firebaseObject(dxCodesRef);
-	  var caseDataSync = caseDataRef;
-	  $scope.messages = $firebaseObject(caseDataRef);
-	  $scope.caseToEdit = $stateParams.caseNum;
-	  var queueSync = queueRef;
-	  var counter = 0;
-	  $scope.preview = false;
-	  $scope.iframeURL = "";
-	  $scope.$watch(function() { return $scope.editFields }, function() { $scope.preview = false }, true);
-
-	  // dxCodes.$loaded(function() {
-	  //   console.log(dxCodes.bccn);
-	  // }, function(error) {
-	  //   console.error('Error:', error);
-	  // });
 
 	$scope.previewPDF =  function(data) {
-		
-		console.log("One time...");
 		var doc = new PDFDocument();
 	    var stream = doc.pipe(blobStream());
 
@@ -69,16 +66,16 @@ angular.module('newlisApp')
 	    $document[ 0 ].getElementById('input_codeToEdit').focus();
 	  };
   
-    $scope.messages.$loaded(function() {
-	    $scope.editFields = $scope.messages[$stateParams.caseNum];
+ //    $scope.messages.$loaded(function() {
+	//     $scope.editFields = $scope.messages[$stateParams.caseNum];
 
-	    if($scope.editFields.diagnosisTextArea==='') {
-	      $scope.loadFields();
-	      setTimeout(function() { 
-	      	$scope.gotoNextBlank();
- 		  }, 300);
-	    }
-	});
+	//     if($scope.editFields.diagnosisTextArea==='') {
+	//       $scope.loadFields();
+	//       setTimeout(function() { 
+	//       	$scope.gotoNextBlank();
+ // 		  }, 300);
+	//     }
+	// });
 
 	$scope.dxCodeEntry = function() {
 	    var baseCodeThisCase, useMicro, useICD9, j, rawDXCode, lastCodeUsed, frontHelpersThisCase, finishPos;
